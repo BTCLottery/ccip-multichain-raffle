@@ -22,7 +22,6 @@ abstract contract AutomatedRandomness is VRFConsumerBaseV2, LotteryManager {
         address _vrfCoordinator,
         address _linkToken,
         uint64 _subscriptionId,
-        uint32 _callbackGasLimit,
         uint16 _requestConfirmations,
         bytes32 _keyHash
     ) VRFConsumerBaseV2(_vrfCoordinator) LotteryManager() {
@@ -30,7 +29,7 @@ abstract contract AutomatedRandomness is VRFConsumerBaseV2, LotteryManager {
         LINKToken = LinkTokenInterface(_linkToken);
 
         // Chainlink VRF and Keepers
-        callbackGasLimit = _callbackGasLimit;
+        callbackGasLimit = 2500000;
         requestConfirmations = _requestConfirmations;
         subscriptionId = _subscriptionId;
         keyHash = _keyHash;

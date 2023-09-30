@@ -19,6 +19,8 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
     /* ============ Global Variables ============ */
     using SafeERC20 for IERC20;
 
+    IERC20 public whitelistedToken;
+
     // Mapping the details of each round
     mapping(uint256 => BTCLCoreFixed.Round) public rounds;
 
@@ -34,7 +36,6 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
      * @param _coordinatorAddress address of the VRF coordinator contract
      * @param _linkToken address of the Link token contract
      * @param _subscriptionId unique subscription ID for VRF service
-     * @param _callbackGasLimit gas limit for the VRF callback
      * @param _requestConfirmations number of confirmations required for VRF requests
      * @param _keyHash Keccak256 hash of the VRF private key
      */
@@ -47,18 +48,11 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         uint256 _ticketFee,
         uint256 _totalWinners,
         uint64 _subscriptionId,
-        uint32 _callbackGasLimit,
         uint16 _requestConfirmations,
-        bytes32 _keyHash
+        bytes32 _keyHash,
+        IERC20 _whitelistedToken
     )
-        AutomatedRandomness(
-            _coordinatorAddress,
-            _linkToken,
-            _subscriptionId,
-            _callbackGasLimit,
-            _requestConfirmations,
-            _keyHash
-        )
+        AutomatedRandomness(_coordinatorAddress, _linkToken, _subscriptionId, _requestConfirmations, _keyHash)
         LotteryReceiver(_ccipRouter)
     {
         // Initialize the round number to 1
@@ -73,6 +67,7 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         ticketFee = _ticketFee;
         // Set ticket fee
         totalWinners = _totalWinners;
+        whitelistedToken = _whitelistedToken;
         // Emit first round event
         emit BTCLCoreFixed.LotteryOpened(round);
     }
@@ -82,8 +77,8 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
      * @notice If high demand you will buy a ticket in a future round
      * @dev Function that allows players to purchase 1 ticket per address
      */
-    function buyTicket() public payable returns (uint256 roundNr) {
-        return purchaseTickets(selectRound());
+    function buyTicket(uint256 _amount) public returns (uint256 roundNr) {
+        return purchaseTickets(selectRound(), _amount);
     }
 
     /**
@@ -98,7 +93,7 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         return currentRound;
     }
 
-    function purchaseTickets(uint256 roundNr) private returns (uint256 roundNumber) {
+    function purchaseTickets(uint256 roundNr, uint256 _amount) private returns (uint256 roundNumber) {
         // Check if the lottery is paused and that there is a new round, if yes, revert the transaction
         if (paused == true && rounds[roundNr].status.totalBets == 0) revert BTCLCoreFixed.LOTTERY_PAUSED();
 
@@ -106,15 +101,17 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         if (rounds[roundNr].status.roundStatus != BTCLCoreFixed.Status.Open) revert BTCLCoreFixed.TRANSFER_FAILED();
 
         // Check if the MATIC provided is equal to ticket price plus fee exactly
-        if (msg.value != ticketPrice + ticketFee) revert BTCLCoreFixed.TRANSFER_FAILED();
+        if (_amount != ticketPrice + ticketFee) revert BTCLCoreFixed.TRANSFER_FAILED();
         // add erc20 bnm
         // replace msg.value with amount
 
         // Check if already bought a ticket in the current round
         if (rounds[roundNr].contributed[msg.sender] > 0) revert BTCLCoreFixed.TRANSFER_FAILED();
 
+        whitelistedToken.transferFrom(msg.sender, address(this), _amount);
+
         // Set Contribution amount
-        rounds[roundNr].contributed[msg.sender] = msg.value;
+        rounds[roundNr].contributed[msg.sender] = _amount;
 
         // get next bet id and current last ticket index
         uint256 nextBet = rounds[roundNr].status.totalBets + 1;
@@ -124,14 +121,14 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         setPurchaser(roundNr, nextBet, msg.sender);
         setLastIndex(roundNr, nextBet, lastIndex + 1);
 
-        uint256 totalTickets = rounds[roundNr].status.totalTickets + (msg.value - ticketFee);
+        uint256 totalTickets = rounds[roundNr].status.totalTickets + (_amount - ticketFee);
 
         // increment the total bets and total tickets of the round
         rounds[roundNr].status.totalBets = nextBet;
         rounds[roundNr].status.totalTickets = totalTickets;
 
         // emit event to log the purchase
-        emit BTCLCoreFixed.TicketsPurchased(roundNr, msg.sender, msg.value, nextBet, totalTickets);
+        emit BTCLCoreFixed.TicketsPurchased(roundNr, msg.sender, _amount, nextBet, totalTickets);
         return roundNr;
     }
 
