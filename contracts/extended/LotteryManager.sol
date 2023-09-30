@@ -2,47 +2,47 @@
 pragma solidity 0.8.17;
 
 contract LotteryManager {
-    error NOT_OWNER();
+    error NOT_MANAGER();
     error ADDRESS_ZERO();
 
     bool public paused;
-    address public owner;
-    
+    address public manager;
+
     /**
      * @notice Lottery Owner & Pausable Helper Functions
      */
-    constructor(bool _paused) {
-        owner = msg.sender;
-        paused = _paused;
+    constructor() {
+        manager = msg.sender;
+        paused = false;
     }
 
     /**
      * @dev Owner Modifier
      */
-    modifier onlyOwner() {
-        if (owner != msg.sender) revert NOT_OWNER();
+    modifier onlyManager() {
+        if (manager != msg.sender) revert NOT_MANAGER();
         _;
     }
 
     /**
      * @dev Transfer Lottery Owner
      */
-    function transferOwnership(address newOwner) external onlyOwner {
-        if(newOwner == address(0)) revert ADDRESS_ZERO();
-        owner = newOwner;
+    function transferManager(address newManager) external onlyManager {
+        if (newManager == address(0)) revert ADDRESS_ZERO();
+        manager = newManager;
     }
 
     /**
      * @dev Pause Lottery
      */
-    function pause() external onlyOwner {
+    function pause() external onlyManager {
         paused = true;
     }
 
     /**
      * @dev Unpause Lottery
      */
-    function unpause() external onlyOwner {
+    function unpause() external onlyManager {
         paused = false;
     }
 }
