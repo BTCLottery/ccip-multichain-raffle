@@ -8,6 +8,7 @@ import {AutomatedRandomness} from "./extended/AutomatedRandomness.sol";
 import {BTCLCoreFixed} from "./libraries/BTCLCoreFixed.sol";
 import {LotteryReceiver} from "./LotteryReceiver.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
+import {LotterySender} from "./LotterySender.sol";
 
 /**
  * @title v1.0 Beta Version
@@ -15,11 +16,15 @@ import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
  * @dev This contract utilises Chainlink Verifiable Random Function (VRF) + Automation Keeper Subscription for trustlesness
  * @dev This contract is an immutable EVM Raffle Game with a fixed and unchangeable configuration that was set on deployment
  */
-contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, ReentrancyGuard, LotteryReceiver {
+contract BTCLFixedLottery is
+    AutomationCompatible,
+    AutomatedRandomness,
+    ReentrancyGuard,
+    LotteryReceiver,
+    LotterySender
+{
     /* ============ Global Variables ============ */
     using SafeERC20 for IERC20;
-
-    IERC20 public whitelistedToken;
 
     // Mapping the details of each round
     mapping(uint256 => BTCLCoreFixed.Round) public rounds;
@@ -42,7 +47,8 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
     constructor(
         address _coordinatorAddress,
         address _linkToken,
-        address _ccipRouter,
+        address _ccipReceiveRouter,
+        address _ccipSendRouter,
         uint256 _maxPlayers,
         uint256 _ticketPrice,
         uint256 _ticketFee,
@@ -53,7 +59,8 @@ contract BTCLFixedLottery is AutomationCompatible, AutomatedRandomness, Reentran
         IERC20 _whitelistedToken
     )
         AutomatedRandomness(_coordinatorAddress, _linkToken, _subscriptionId, _requestConfirmations, _keyHash)
-        LotteryReceiver(_ccipRouter)
+        LotteryReceiver(_ccipReceiveRouter)
+        LotterySender(_ccipSendRouter, _linkToken)
     {
         // Initialize the round number to 1
         round = 1;
