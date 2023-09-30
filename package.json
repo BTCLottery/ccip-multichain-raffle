@@ -1,0 +1,51 @@
+{
+    "name": "ccip-multichain-raffle",
+    "description": "Bitcoin Lottery Protocol - CCIP Multichain Raffle",
+    "license": "MIT",
+    "scripts": {
+        "build": "npx hardhat compile",
+        "test": "npx hardhat compile && npx hardhat test test/hardhat/*",
+        "fork": "npx hardhat node",
+        "mumbaiDeployFixedBTCLCore": "npx hardhat compile && npx hardhat run scripts/deployBTCLCoreV1.ts --network polygonMumbai",
+        "mumbaiVerifyFixedBTCLCore": "npx hardhat verify 0xA1F77e747c44a9349318cA98cB839EFA27D3ac0e --network polygonMumbai",
+        "mumbaiDeployFixedLottery": "npx hardhat compile && npx hardhat run scripts/deployFixedLottery.ts --network polygonMumbai",
+        "mumbaiVerifyFixedLottery": "npx hardhat verify --constructor-args verify/testnet/mumbaiConfig.ts 0x62775694021b1F085fB4Fa2Bec0757bcEFeDaB16 --network polygonMumbai",
+        "mumbaiBuyTicketFixedLottery": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLottery.ts --network polygonMumbai",
+        "mumbaiBuyTicketFixedLotteryMultichain": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLotteryMultichain.ts --network polygonMumbai"
+    },
+    "devDependencies": {
+        "@nomicfoundation/hardhat-chai-matchers": "^1.0.3",
+        "@nomicfoundation/hardhat-network-helpers": "^1.0.8",
+        "@nomiclabs/hardhat-ethers": "^2.1.1",
+        "@nomiclabs/hardhat-etherscan": "3.1.0",
+        "@openzeppelin/contracts": "^4.9.3",
+        "@typechain/ethers-v5": "^10.1.0",
+        "@typechain/hardhat": "^6.1.2",
+        "@types/jest": "^29.0.0",
+        "@types/mocha": "^9.1.1",
+        "chai": "^4.3.6",
+        "dotenv": "^16.0.2",
+        "erc721a": "^4.2.3",
+        "ethers": "^5.7.0",
+        "hardhat": "^2.10.2",
+        "hardhat-gas-reporter": "^1.0.8",
+        "solidity-coverage": "^0.7.21",
+        "ts-node": "^10.9.1",
+        "typechain": "^8.1.0",
+        "typescript": "^4.8.2"
+    },
+    "dependencies": {
+        "@chainlink/contracts": "^0.5.1",
+        "@opengsn/contracts": "^3.0.0-beta.1",
+        "@types/js-yaml": "^4.0.5",
+        "bignumber.js": "^9.1.0",
+        "bip39": "^3.0.4",
+        "csv-parser": "^3.0.0",
+        "hdkey": "^2.1.0",
+        "js-yaml": "^4.1.0",
+        "web3": "^1.8.0"
+    },
+    "mocha": {
+        "timeout": "100000"
+    }
+}
