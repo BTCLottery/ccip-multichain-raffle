@@ -5,7 +5,6 @@ export type FujiLotterySenderType = [
 
 export type ConfigType = [
     string,  // _ccipReceiveRouter
-    string,  // _ccipSendRouter
     string,  // _whitelistedToken
     string,  // _coordinator
     string,  // _linkToken

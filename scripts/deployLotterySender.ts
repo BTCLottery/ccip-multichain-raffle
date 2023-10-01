@@ -18,7 +18,7 @@ async function main() {
 
   const FujiCCIPRouter = `0x554472a2720E5E7D5D3C817529aBA05EEd5F82D8`;
   const FujiLinkToken = `0x0b9d5D9136855f6FEc3c0993feE6E9CE8a297846`;
-  const receiver = `0xD0d2779b2c1CCd0eBbDA723Ae464E87C749Dd9C5`;
+  const receiver = `0x973f1dA88f28d9C5DBd73654865D261443a83f0F`;// `0xD0d2779b2c1CCd0eBbDA723Ae464E87C749Dd9C5`;
   const ccipBnMAddress = `0xD21341536c5cF5EB1bcb58f6723cE26e8D8E90e4`;
   const amount = 110000000000000000n; // 0.11 Bnm
   const destinationChainSelector = "12532609583862916517"; // mumbai chain selector

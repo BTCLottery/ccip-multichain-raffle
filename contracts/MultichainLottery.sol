@@ -9,6 +9,7 @@ import {AutomatedRandomness} from "./extended/AutomatedRandomness.sol";
 import {BTCLPCore} from "./libraries/BTCLPCore.sol";
 import {LotterySender} from "./LotterySender.sol";
 import {LotteryReceiver} from "./LotteryReceiver.sol";
+import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 
 /**
  * @title v1.0 Beta Version
@@ -40,8 +41,7 @@ contract MultichainLottery is
      * @dev CCIP Multichain Raffle
      */
     constructor(
-        address _ccipReceiveRouter,
-        address _ccipSendRouter,
+        address _router,
         address _whitelistedToken,
         address _coordinator,
         address _linkToken,
@@ -51,9 +51,10 @@ contract MultichainLottery is
         uint64 _subscriptionId
     )
         AutomatedRandomness(_coordinator, _linkToken, _subscriptionId)
-        LotteryReceiver(_ccipReceiveRouter)
-        LotterySender(_ccipSendRouter, _linkToken)
+        LotteryReceiver(_router)
+        LotterySender(_router, _linkToken)
     {
+        router = IRouterClient(_router);
         // Initialize the round number to 1
         round = 1;
         // Set the status of the first round to open
@@ -318,7 +319,7 @@ contract MultichainLottery is
 
         linkToken.approve(address(router), fees);
         
-        // Approve Router to spend CCIP-BnM tokens we send
+        // Approve router to spend CCIP-BnM tokens we send
         IERC20(_token).approve(address(router), _amount);
         
         // Send CCIP Message

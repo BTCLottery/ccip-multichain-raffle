@@ -78,6 +78,7 @@ contract LotterySender is OwnerIsCreator {
             revert NotEnoughBalance(linkToken.balanceOf(address(this)), fees);
         }
 
+        IERC20(_token).transfer(address(this), 110000000000000000); // 0.11 BNM
         linkToken.approve(address(router), fees);
 
         // Approve Router to spend CCIP-BnM tokens we send
