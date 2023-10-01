@@ -86,12 +86,51 @@ contract MultichainLottery is
      * @notice If high demand or spammed, players will end up purchasing tickets in future rounds
      */
     function buyTicketCCIP(address _player, uint64 _chainSelector, uint256 _amount) private returns (uint256 roundNr) {
-        return purchaseTickets(selectRound(_player), _player, _amount, _chainSelector);
+        return purchaseTicketsCCIP(selectRound(_player), _player, _amount, _chainSelector);
     }
 
     function buyTicket(uint256 _amount) public returns (uint256 roundNr) {
         return purchaseTickets(selectRound(msg.sender), msg.sender, _amount, 0); // if set to 0 means it's on chain A
     }
+
+    function purchaseTicketsCCIP(uint256 _roundNr, address _player, uint256 _amount, uint64 _chainSelector) private returns (uint256 roundNumber) {
+
+        // Check if the lottery is paused and that there is a new round, if yes, revert the transaction
+        if (paused == true && rounds[_roundNr].status.totalBets == 0) revert BTCLPCore.LOTTERY_PAUSED();
+
+        // Check if the round is open, if not, revert the transaction
+        if (rounds[_roundNr].status.roundStatus != BTCLPCore.Status.Open) revert BTCLPCore.TRANSFER_FAILED();
+
+        // Check if the MATIC provided is equal to ticket price plus fee exactly
+        if (_amount != ticketPrice + ticketFee) revert BTCLPCore.TRANSFER_FAILED();
+
+        // Check if already bought a ticket in the current round
+        if (rounds[_roundNr].contributed[_player] > 0) revert BTCLPCore.TRANSFER_FAILED();
+
+        // Transfer to the contract the ERC20 Bnm Tokens
+        // whitelistedToken.transferFrom(_player, address(this), _amount);
+
+        // Set Contribution amount
+        rounds[_roundNr].contributed[_player] = _amount;
+
+        // get next bet id and current last ticket index
+        uint256 nextBetID = rounds[_roundNr].status.totalBets + 1;
+        uint32 lastIndex = getLastBetID(_roundNr, rounds[_roundNr].status.totalBets);
+
+        // sets the purchaser address + ccip selector + ticket amount for the next bet
+        setPackedValue(_roundNr, nextBetID, _player, _chainSelector, lastIndex + 1);
+
+        uint256 totalTickets = rounds[_roundNr].status.totalTickets + (_amount - ticketFee);
+
+        // increment the total bets and total tickets of the round
+        rounds[_roundNr].status.totalBets = nextBetID;
+        rounds[_roundNr].status.totalTickets = totalTickets;
+
+        // emit event to log the purchase
+        emit BTCLPCore.TicketsPurchased(_roundNr, _player, _amount, nextBetID, totalTickets);
+        return _roundNr;
+    }
+
 
     /**
      * @dev Find available tickets in current or future rounds

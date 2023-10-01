@@ -55,7 +55,6 @@ contract LotterySender is OwnerIsCreator {
 
     function transferTokens(uint64 _destinationChainSelector, address _receiver, address _token, uint256 _amount)
         external
-        onlyOwner
         onlyWhitelistedChain(_destinationChainSelector)
         returns (bytes32 messageId)
     {
