@@ -193,7 +193,7 @@ contract MultichainLottery is
         // Change the status of the round from Drawing and save winning VRF randomness
         rounds[round].status.roundStatus = BTCLPCore.Status.Completed;
         rounds[round].status.requestId = requestId;
-        rounds[round].status.randomness = randomness;
+        rounds[round].status.randomness = randomness[0];
 
         // IF CCIP WINNER SEND HIS PRIZE BACK TO HIS SOURCE CHAIN
         (address luckyWinner, uint64 sourceChainSelector, uint256 luckyPrize) = calculateWinner(round);
@@ -222,7 +222,7 @@ contract MultichainLottery is
         returns (address luckyWinner, uint64 sourceChainSelector, uint256 luckyPrize)
     {
         (uint256[] memory rewards) = calculateRewards(rounds[roundNr].status.totalTickets, 0);
-        uint256 luckyTicket = (rounds[roundNr].status.randomness[0] % rounds[roundNr].status.totalBets) + 1;
+        uint256 luckyTicket = (rounds[roundNr].status.randomness % rounds[roundNr].status.totalBets) + 1;
         (address purchaser, uint64 chainSelector,) = unpackPackedValue(roundNr, luckyTicket);
         luckyWinner = purchaser;
         sourceChainSelector = chainSelector;

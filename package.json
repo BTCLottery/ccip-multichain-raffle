@@ -7,11 +7,12 @@
         "test": "npx hardhat compile && npx hardhat test test/hardhat/*",
         "fork": "npx hardhat node",
         "mumbaiDeployFixedBTCLCore": "npx hardhat compile && npx hardhat run scripts/deployBTCLCoreV1.ts --network polygonMumbai",
-        "mumbaiVerifyFixedBTCLCore": "npx hardhat verify 0xA1F77e747c44a9349318cA98cB839EFA27D3ac0e --network polygonMumbai",
+        "mumbaiVerifyFixedBTCLCore": "npx hardhat verify 0xC70C19a4ADa3DEb8Ba168e927C0678CACBd6513A --network polygonMumbai",
         "mumbaiDeployFixedLottery": "npx hardhat compile && npx hardhat run scripts/deployFixedLottery.ts --network polygonMumbai",
         "mumbaiVerifyFixedLottery": "npx hardhat verify --constructor-args verify/testnet/mumbaiConfig.ts 0x62775694021b1F085fB4Fa2Bec0757bcEFeDaB16 --network polygonMumbai",
         "mumbaiBuyTicketFixedLottery": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLottery.ts --network polygonMumbai",
-        "mumbaiBuyTicketFixedLotteryMultichain": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLotteryMultichain.ts --network polygonMumbai"
+        "mumbaiBuyTicketFixedLotteryMultichain": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLotteryMultichain.ts --network polygonMumbai",
+        "deployLotterySender": "npx hardhat compile && npx hardhat run scripts/deployLotterySender.ts --network polygonMumbai"
     },
     "devDependencies": {
         "@chainlink/contracts-ccip": "^0.7.6",

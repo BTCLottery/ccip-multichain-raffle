@@ -2,22 +2,17 @@ import { ConfigType } from "../../utils/types/deployerConfig";
 
 const subsId = 2928 // https://vrf.chain.link/mumbai/2928
 
-// const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-const keyHash = "0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f";
-
 // module.exports = [
 const mumbaiConfig: ConfigType = [
+    "0x70499c328e1E2a3c41108bd3730F6670a44595D1", // address _ccipReceiveRouter
+    "0x554472a2720E5E7D5D3C817529aBA05EEd5F82D8", // address _ccipSendRouter
+    "0xf1E3A5842EeEF51F2967b3F05D45DD4f4205FF40", // address _whitelistedToken
     "0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed", // address _coordinatorAddress,
     "0x326c977e6efc84e512bb9c30f76e30c160ed06fb", // address _linkToken,
-    20, // players,
-    "5000000000000000", // ticket price
-    "500000000000000", // ticket fee
-    4, // number of winners
-    subsId, // uint64 _subscriptionId,
-    2500000, // uint32 _callbackGasLimit,
-    3, // uint16 _requestConfirmations
-    keyHash, // bytes32 _keyHash
-    false, // paused
+    2, // max players per round,
+    "100000000000000000", // ticket price
+    "10000000000000000", // ticket fee
+    subsId, // uint64 _subscriptionId
 ];
 
 export default mumbaiConfig

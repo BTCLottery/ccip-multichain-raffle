@@ -11,19 +11,19 @@ async function main() {
   console.log('network', network)
   console.log('balance', balance)
 
-  let BTCLCore: Contract;
-  let BTCLCoreFactory = await ethers.getContractFactory('BTCLCore');
-  BTCLCore = await BTCLCoreFactory.connect(owner).deploy();
-  await BTCLCore.deployed();
+  let BTCLPCore: Contract;
+  let BTCLPCoreFactory = await ethers.getContractFactory('BTCLPCore');
+  BTCLPCore = await BTCLPCoreFactory.connect(owner).deploy();
+  await BTCLPCore.deployed();
 
-  console.log("BTCLCore.address", BTCLCore.address)
+  console.log("BTCLPCore.address", BTCLPCore.address)
 
-  saveInfo('BTCLCore', network, BTCLCore.address)
+  saveInfo('BTCLPCore', network, BTCLPCore.address)
 
   await sleep(15000);
 
   await hre.run("verify:verify", {
-    address: BTCLCore.address,
+    address: BTCLPCore.address,
     constructorArguments: []
   });
 }

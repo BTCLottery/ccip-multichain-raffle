@@ -26,7 +26,7 @@ library BTCLPCore {
         uint requestId;        // Round Chainlink VRF Request ID
         uint totalTickets;     // Round Tickets Purchased
         uint totalBets;        // Round Bet ID Number
-        uint[] randomness;     // Round Random Numbers
+        uint randomness;       // Round Random Number
         bool claimedTreasury;  // Round treasury fees claimed
     }
 

@@ -1,15 +1,18 @@
+export type FujiLotterySenderType = [
+    string,
+    string
+]
+
 export type ConfigType = [
-    string,  // _coordinatorAddress
+    string,  // _ccipReceiveRouter
+    string,  // _ccipSendRouter
+    string,  // _whitelistedToken
+    string,  // _coordinator
     string,  // _linkToken
     number,  // players
     string,  // ticket price
     string,  // ticket fee
-    number,  // number of winners
     number,  // _subscriptionId
-    number,  // _callbackGasLimit
-    number,  // _requestConfirmations
-    string,  // _keyHash
-    boolean, // _paused
 ];
 
 export type CustomChainlinkConfigType = [
