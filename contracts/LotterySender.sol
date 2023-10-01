@@ -10,7 +10,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 contract LotterySender is OwnerIsCreator {
     LinkTokenInterface linkToken;
     IRouterClient router;
-    IERC20 whitelistedToken;
+    IERC20 public whitelistedToken;
 
     mapping(uint64 => bool) public whitelistedChains;
 

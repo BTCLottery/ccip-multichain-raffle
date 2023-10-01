@@ -6,9 +6,9 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.
 import {AutomationCompatible} from "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import {AutomatedRandomness} from "./extended/AutomatedRandomness.sol";
 import {BTCLCoreFixed} from "./libraries/BTCLCoreFixed.sol";
-import {LotteryReceiver} from "./LotteryReceiver.sol";
 import {IERC20} from "@openzeppelin/contracts/interfaces/IERC20.sol";
 import {LotterySender} from "./LotterySender.sol";
+import {LotteryReceiver} from "./LotteryReceiver.sol";
 
 /**
  * @title v1.0 Beta Version
@@ -31,34 +31,27 @@ contract BTCLFixedLottery is
 
     // Round configuration
     uint256 public round;
-    uint256 public ticketPrice;
-    uint256 public ticketFee;
-    uint256 public maxPlayers;
-    uint256 public totalWinners;
+    uint256 public immutable ticketPrice;
+    uint256 public immutable ticketFee;
+    uint256 public immutable maxPlayers;
+    uint256 public immutable totalWinners;
 
     /**
      * @dev Constructor for the BTCL Daily Lottery contract
-     * @param _coordinatorAddress address of the VRF coordinator contract
-     * @param _linkToken address of the Link token contract
-     * @param _subscriptionId unique subscription ID for VRF service
-     * @param _requestConfirmations number of confirmations required for VRF requests
-     * @param _keyHash Keccak256 hash of the VRF private key
      */
     constructor(
-        address _coordinatorAddress,
-        address _linkToken,
         address _ccipReceiveRouter,
         address _ccipSendRouter,
+        address _whitelistedToken,
+        address _coordinator,
+        address _linkToken,
         uint256 _maxPlayers,
         uint256 _ticketPrice,
         uint256 _ticketFee,
         uint256 _totalWinners,
-        uint64 _subscriptionId,
-        uint16 _requestConfirmations,
-        bytes32 _keyHash,
-        IERC20 _whitelistedToken
+        uint64 _subscriptionId
     )
-        AutomatedRandomness(_coordinatorAddress, _linkToken, _subscriptionId, _requestConfirmations, _keyHash)
+        AutomatedRandomness(_coordinator, _linkToken, _subscriptionId)
         LotteryReceiver(_ccipReceiveRouter)
         LotterySender(_ccipSendRouter, _linkToken)
     {
@@ -74,7 +67,7 @@ contract BTCLFixedLottery is
         ticketFee = _ticketFee;
         // Set ticket fee
         totalWinners = _totalWinners;
-        whitelistedToken = _whitelistedToken;
+        whitelistedToken = IERC20(_whitelistedToken);
         // Emit first round event
         emit BTCLCoreFixed.LotteryOpened(round);
     }

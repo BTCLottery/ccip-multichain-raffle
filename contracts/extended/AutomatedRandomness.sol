@@ -18,21 +18,19 @@ abstract contract AutomatedRandomness is VRFConsumerBaseV2, LotteryManager {
     uint16 public requestConfirmations; // Min blocks after winner is announced on-chain
     bytes32 public keyHash;
 
-    constructor(
-        address _vrfCoordinator,
-        address _linkToken,
-        uint64 _subscriptionId,
-        uint16 _requestConfirmations,
-        bytes32 _keyHash
-    ) VRFConsumerBaseV2(_vrfCoordinator) LotteryManager() {
-        COORDINATOR = VRFCoordinatorV2Interface(_vrfCoordinator);
+    constructor(address _coordinator, address _linkToken, uint64 _subscriptionId) VRFConsumerBaseV2(_coordinator) LotteryManager() {
+        // Vrf Coordonator
+        COORDINATOR = VRFCoordinatorV2Interface(0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed);
+        // Link Token
         LINKToken = LinkTokenInterface(_linkToken);
-
-        // Chainlink VRF and Keepers
-        callbackGasLimit = 2500000;
-        requestConfirmations = _requestConfirmations;
+        // VRF Subscription ID
         subscriptionId = _subscriptionId;
-        keyHash = _keyHash;
+        // Chainlink VRF and Keepers Max Callback Gas limit
+        callbackGasLimit = 2500000;
+        // number of confirmations required for VRF requests
+        requestConfirmations = 3;
+        //  Keccak256 hash of the VRF private key for 200 Gwei Gas Lane
+        keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
     }
 
     function requestRandomness(uint32 _randomNumbers) internal returns (uint256) {
@@ -44,6 +42,13 @@ abstract contract AutomatedRandomness is VRFConsumerBaseV2, LotteryManager {
             _randomNumbers // randomness big hex numbers
         );
         return requestId;
+    }
+
+    /**
+     * @dev Set Chainlink VRF Gas Lane
+     */
+    function setGasLimit(bytes32 _keyHash) external onlyManager {
+        keyHash = _keyHash;
     }
 
     /**
