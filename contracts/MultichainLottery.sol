@@ -181,6 +181,7 @@ contract MultichainLottery is
         }
     }
 
+    uint public test = 0;
     /**
      * @notice Requests randomness from the VRF coordinator and save the random numbers in the draw
      * @param requestId the VRF V2 request ID, provided at request time.
@@ -200,12 +201,14 @@ contract MultichainLottery is
 
         // LOCAL TRANSFER BNM TOKENS TO WINNER ON CHAIN A
         if (sourceChainSelector == 0) {
-            BTCLPCore.distributionHelper(luckyWinner, luckyPrize);
+            BTCLPCore.distributionHelper(address(whitelistedToken), luckyWinner, luckyPrize);
+            test = 1;
         }
         
         // CCIP TRANSFER BNM TOKENS TO WINNER ON CHAIN B
         if (sourceChainSelector > 0) {
-            transferTokensCCIP(sourceChainSelector, luckyWinner, address(whitelistedToken), luckyPrize);
+            transferTokensCCIP(sourceChainSelector, luckyWinner, address(address(whitelistedToken)), luckyPrize);
+            test = 2;
         }
 
         rounds[round].winnerClaimed[luckyWinner] == true;   
@@ -310,7 +313,7 @@ contract MultichainLottery is
         rounds[roundNr].status.claimedTreasury = true;
 
         // Send accumulated fees to DAO Multisig
-        BTCLPCore.distributionHelper(msg.sender, roundFees);
+        BTCLPCore.distributionHelper(address(whitelistedToken), msg.sender, roundFees);
 
         // Emit the TreasuryClaimed event
         emit BTCLPCore.TreasuryClaimedSingle(treasuryAddress, roundFees);
@@ -336,7 +339,7 @@ contract MultichainLottery is
         }
 
         // Send accumulated fees to DAO Multisig
-        BTCLPCore.distributionHelper(msg.sender, totalAmount);
+        BTCLPCore.distributionHelper(address(whitelistedToken), msg.sender, totalAmount);
 
         emit BTCLPCore.TreasuryClaimedMulti(msg.sender, roundNumbers);
     }

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: BUSL-1.1
 pragma solidity 0.8.17;
 
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+
 /**
  * @title Bitcoin Lottery Protocol Core Library - v0.1 Beta
  * @dev Multichain Raffles Functionality
@@ -184,18 +186,10 @@ library BTCLPCore {
      * @param to The address to transfer the MATIC to
      * @param amount The amount of MATIC to transfer
      */
-    function distributionHelper(address to, uint256 amount) public {
-        (bool success, ) = to.call{value: amount}("");
-        if(!success) revert TRANSFER_FAILED();
-    }
-
-    /**
-     * @dev Private function to transfer MATIC from to the specified address
-     * @param to The address to transfer the MATIC to
-     * @param amount The amount of MATIC to transfer
-     */
-    function ccipDistributionHelper(address to, uint256 amount) public {
-        (bool success, ) = to.call{value: amount}("");
+    
+    function distributionHelper(address tokenAddress, address to, uint256 amount) public {
+        IERC20 token = IERC20(tokenAddress);
+        bool success = token.transfer(to, amount);
         if(!success) revert TRANSFER_FAILED();
     }
 }
