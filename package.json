@@ -12,7 +12,8 @@
         "mumbaiVerifyFixedLottery": "npx hardhat verify --constructor-args verify/testnet/mumbaiConfig.ts 0x62775694021b1F085fB4Fa2Bec0757bcEFeDaB16 --network polygonMumbai",
         "mumbaiBuyTicketFixedLottery": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLottery.ts --network polygonMumbai",
         "mumbaiBuyTicketFixedLotteryMultichain": "npx hardhat compile && npx hardhat run scripts/buyTicketsFixedLotteryMultichain.ts --network polygonMumbai",
-        "deployLotterySender": "npx hardhat compile && npx hardhat run scripts/deployLotterySender.ts --network polygonMumbai"
+        "deployLotterySender": "npx hardhat compile && npx hardhat run scripts/deployLotterySender.ts --network fuji",
+        "fujiVerifyLotterySender": "npx hardhat verify --constructor-args verify/testnet/fujiLotterySenderConfig.ts 0x7120d8bdda22c873480cc40378d917e3530ca791 --network fuji"
     },
     "devDependencies": {
         "@chainlink/contracts-ccip": "^0.7.6",

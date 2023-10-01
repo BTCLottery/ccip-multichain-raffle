@@ -24,6 +24,7 @@ const {
   CMC,
   ALCHEMY_SEPOLIA,
   FUJI,
+  FUJI_EXPLORER_API_KEY
 } = process.env;
 
 const {
@@ -115,6 +116,7 @@ const config: HardhatUserConfig = {
       goerli: ETHERSCAN_API_KEY!,
       polyMainnet: POLYGONSCAN_API_KEY!,
       polygonMumbai: POLYGONSCAN_API_KEY!,
+      fuji: FUJI_EXPLORER_API_KEY!,
     },
     customChains: [
       {
@@ -131,6 +133,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: "https://api.polygonscan.com/api",
           browserURL: "https://api.polygonscan.com",
+        },
+      },
+      {
+        network: "fuji",
+        chainId: 43113,
+        urls: {
+          apiURL: "https://api-testnet.snowtrace.io/api",
+          browserURL: "https://testnet.snowtrace.io/",
         },
       },
     ],
