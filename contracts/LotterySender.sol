@@ -66,9 +66,9 @@ contract LotterySender is OwnerIsCreator {
         // Build the CCIP Message
         Client.EVM2AnyMessage memory message = Client.EVM2AnyMessage({
             receiver: abi.encode(_receiver),
-            data: abi.encodeWithSignature("mint(address)", msg.sender),
+            data: abi.encodeWithSignature("buyTicketCCIP(address,uint64,uint256)", msg.sender, _destinationChainSelector, tokenAmounts),
             tokenAmounts: tokenAmounts,
-            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false})),
+            extraArgs: Client._argsToBytes(Client.EVMExtraArgsV1({gasLimit: 800_000, strict: false})),
             feeToken: address(linkToken)
         });
 

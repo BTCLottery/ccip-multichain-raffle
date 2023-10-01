@@ -5,10 +5,7 @@ import "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
 import "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.sol";
 import "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
 
-contract LotteryReceiver is CCIPReceiver, OwnerIsCreator {
-    address public latestSender;
-    string public latestMessage;
-
+abstract contract LotteryReceiver is CCIPReceiver, OwnerIsCreator {
     mapping(uint64 => bool) public whitelistedSourceChains;
     mapping(address => bool) public whitelistedSenders;
 
@@ -28,11 +25,6 @@ contract LotteryReceiver is CCIPReceiver, OwnerIsCreator {
     }
 
     constructor(address router) CCIPReceiver(router) {}
-
-    function _ccipReceive(Client.Any2EVMMessage memory message) internal override {
-        latestSender = abi.decode(message.sender, (address));
-        latestMessage = abi.decode(message.data, (string));
-    }
 
     function whitelistSourceChain(uint64 _sourceChainSelector) external onlyOwner {
         whitelistedSourceChains[_sourceChainSelector] = true;

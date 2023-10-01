@@ -13,7 +13,7 @@ async function main() {
   console.log('mumbaiConfig', mumbaiConfig)
 
   let BTCLCore: Contract;
-  let BTCLFixedLottery: Contract;
+  let MultichainLottery: Contract;
   let config: ConfigType
 
   if(network === "polygonMumbai") {
@@ -28,27 +28,27 @@ async function main() {
   const BTCLCoreAddress: string = readYaml(`BTCLCoreFixed`, network)
   BTCLCore = await ethers.getContractAt('BTCLCoreFixed', BTCLCoreAddress);
 
-  let BTCLFixedLotteryFactory = await ethers.getContractFactory('BTCLFixedLottery', {
+  let MultichainLotteryFactory = await ethers.getContractFactory('MultichainLottery', {
     libraries: { BTCLCore: BTCLCore.address }
   })
 
-  BTCLFixedLottery = await BTCLFixedLotteryFactory.connect(owner).deploy(...config)
-  await BTCLFixedLottery.deployed()
-  console.log('BTCLFixedLottery', BTCLFixedLottery.address)
+  MultichainLottery = await MultichainLotteryFactory.connect(owner).deploy(...config)
+  await MultichainLottery.deployed()
+  console.log('MultichainLottery', MultichainLottery.address)
   
-  saveInfo(`Fixed_Duel_20P_4W_MUMBAI_TESTNET`, network, BTCLFixedLottery.address)
+  saveInfo(`Fixed_Duel_20P_4W_MUMBAI_TESTNET`, network, MultichainLottery.address)
 
   await sleep(35000);
   
   await hre.run("verify:verify", {
-    address: BTCLFixedLottery.address,
+    address: MultichainLottery.address,
     libraries: {
       BTCLCore: BTCLCore.address
     },
     constructorArguments: mumbaiConfig,
   });
 
-  await BTCLFixedLottery.connect(owner).transferOwnership("0xC42c57eD3aE399Cf564A207b7d5321cA7F424239");
+  await MultichainLottery.connect(owner).transferOwnership("0xC42c57eD3aE399Cf564A207b7d5321cA7F424239");
 
 }
 

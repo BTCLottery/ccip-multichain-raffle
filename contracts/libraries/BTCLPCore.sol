@@ -2,10 +2,10 @@
 pragma solidity 0.8.17;
 
 /**
- * @title BTCLCoreFixed v0.1 Beta
- * @dev Wrappers around Core Fixed Raffle Functionality
+ * @title Bitcoin Lottery Protocol Core Library - v0.1 Beta
+ * @dev Multichain Raffles Functionality
  */ 
-library BTCLCoreFixed {
+library BTCLPCore {
     error UPKEEP_FAILED();
     error LOTTERY_PAUSED();
     error TRANSFER_FAILED();
@@ -13,6 +13,7 @@ library BTCLCoreFixed {
     error INVALID_VRF_REQUEST();
     error UNAUTHORIZED_WINNER();
     error PRIZE_ALREADY_CLAIMED();
+    error CCIP_WRONG_CHAIN_SELECTOR();
 
     enum Status {
         Open,
@@ -36,12 +37,14 @@ library BTCLCoreFixed {
         mapping(uint => uint) betID; // Compacted address and tickets purchased for every betID
     }
 
-    // Bitmasks
+    // Updated Bitmasks
     uint public constant BITMASK_PURCHASER = (1 << 160) - 1;
-    uint public constant BITMASK_LAST_INDEX = ((1 << 96) - 1) << 160;
+    uint public constant BITMASK_CHAIN_SELECTOR = ((1 << 64) - 1) << 160;
+    uint public constant BITMASK_LAST_INDEX = ((1 << 32) - 1) << 224;
 
-    // Bit positions
-    uint public constant BITPOS_LAST_INDEX = 160;
+    // Updated Bit positions
+    uint public constant BITPOS_CHAIN_SELECTOR = 160;
+    uint public constant BITPOS_LAST_INDEX = 224;
 
     /* ============ Events ============ */
     // Event emitted when a new lottery round is opened
@@ -182,6 +185,16 @@ library BTCLCoreFixed {
      * @param amount The amount of MATIC to transfer
      */
     function distributionHelper(address to, uint256 amount) public {
+        (bool success, ) = to.call{value: amount}("");
+        if(!success) revert TRANSFER_FAILED();
+    }
+
+    /**
+     * @dev Private function to transfer MATIC from to the specified address
+     * @param to The address to transfer the MATIC to
+     * @param amount The amount of MATIC to transfer
+     */
+    function ccipDistributionHelper(address to, uint256 amount) public {
         (bool success, ) = to.call{value: amount}("");
         if(!success) revert TRANSFER_FAILED();
     }
